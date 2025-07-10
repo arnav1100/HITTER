@@ -1,0 +1,128 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRACKER 1.0 - Sniper Number Predictor</title>
+  <style>
+    body {
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #00ffcc;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.2em;
+    }
+    .quote {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+      color: #ffcc00;
+    }
+    .input-group {
+      margin: 20px auto;
+      max-width: 500px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 2px solid #00ffcc;
+      background-color: #000;
+      color: #00ffcc;
+      font-size: 1em;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #00ffcc;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #009988;
+    }
+    .results, .history {
+      margin-top: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 12px;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #ccc;
+    }
+    .telegram {
+      color: #00ffcc;
+    }
+  </style>
+</head>
+<body>
+  <h1>CRACKER 1.0</h1>
+  <p class="quote">“They call me a hacker, I call it precision.” — <strong>Arnav</strong></p>  <div class="input-group">
+    <label for="currentPeriod">Enter Current Period Number (last 3 digits):</label>
+    <input type="number" id="currentPeriod" min="1" max="999" placeholder="e.g., 800" />
+    <button onclick="generateInputs()">Submit</button>
+  </div>  <div id="resultsInputArea" class="input-group"></div>  <div id="predictionResult" class="results"></div>
+  <div class="history" id="historyBox"></div>  <div class="footer">
+    <p>Join our Telegram: <a class="telegram" href="https://t.me/+fKHabYVx_shkMDk1" target="_blank">Channel Link</a> | Contact: <a class="telegram" href="https://t.me/arnav_1100" target="_blank">@ARNAV_1100</a></p>
+  </div>  <script>
+    function generateInputs() {
+      const period = parseInt(document.getElementById('currentPeriod').value);
+      const container = document.getElementById('resultsInputArea');
+      container.innerHTML = '';
+
+      if (isNaN(period) || period < 20) {
+        alert("Enter a valid period number (minimum 20)");
+        return;
+      }
+
+      let html = '<label>Enter Last 20 Period Results:</label>';
+      for (let i = period - 20; i < period; i++) {
+        html += `${i}: <input type='number' id='r${i}' min='0' max='9' /><br/>`;
+      }
+      html += '<br/><button onclick="analyzeResults(' + period + ')">Analyze & Predict</button>';
+      container.innerHTML = html;
+    }
+
+    function analyzeResults(current) {
+      const results = [];
+      for (let i = current - 20; i < current; i++) {
+        const val = parseInt(document.getElementById(`r${i}`).value);
+        if (isNaN(val)) {
+          alert("Fill all 20 results correctly.");
+          return;
+        }
+        results.push(val);
+      }
+
+      const freq = {};
+      for (let n of results) {
+        freq[n] = (freq[n] || 0) + 1;
+      }
+      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+      const top3 = sorted.slice(0, 3).map(n => n[0]);
+
+      document.getElementById("predictionResult").innerHTML = `
+        <h2>🎯 Number Shots for ${current}</h2>
+        <p><strong>Play on:</strong> ${top3.join(" / ")}</p>
+        <p>Strategy: Top 3 most frequent digits from last 20 results.</p>
+      `;
+
+      document.getElementById("historyBox").innerHTML = `<h3>📊 History (Last 20 Results)</h3><p>${results.join(" - ")}</p>`;
+      document.getElementById("resultsInputArea").innerHTML = '';
+    }
+  </script></body>
+</html>
