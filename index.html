@@ -2,145 +2,125 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRACKER 1.0 - Number Sniper</title>
+  <title>CRACKER 1.0 - Arnav's Sniper</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('https://images.unsplash.com/photo-1638362421188-790c2fb4c12e') no-repeat center center/cover;
-      color: #fff;
+      background: url('https://media.giphy.com/media/26gscE1vFdkjAlY6c/giphy.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Courier New', monospace;
+      color: #00ffcc;
+      padding: 20px;
     }
     .container {
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 20px;
+      padding: 30px;
       max-width: 600px;
-      margin: 60px auto;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.75);
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+      margin: auto;
+      box-shadow: 0 0 20px #00ffcc;
     }
-    h1 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 5px red;
-    }
-    label, input, button {
-      display: block;
-      width: 100%;
-      margin-bottom: 15px;
-      font-size: 1rem;
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      font-size: 1em;
+      border: none;
+      border-radius: 10px;
     }
     button {
-      background: red;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 10px;
+      background-color: #00ffcc;
+      color: black;
       cursor: pointer;
-      font-weight: bold;
     }
-    .result-box {
-      background: #111;
-      border: 2px solid red;
-      padding: 10px;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 1.2rem;
-    }
-    .footer {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #bbb;
-    }
+    .hidden { display: none; }
+    .results, .history, .prediction { margin-top: 20px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🔥 CRACKER 1.0 🔥</h1>
-    <p style="text-align:center;font-style:italic;">"The Code fears only one name — <b>ARNAV</b>"</p><div id="step1">
-  <label for="period">Enter Current Period Number (last 3 digits):</label>
-  <input type="number" id="period" min="0" max="999" />
-  <button onclick="generateInputs()">Submit</button>
+    <h2>🔥 CRACKER 1.0 - Arnav's VIP Sniper 🔥</h2>
+    <p><strong>Quote:</strong> "When others guess, Arnav calculates. — @ARNAV_1100"</p>
+    <p><strong>Channel:</strong> <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank" style="color:#00ffcc">Join @ARNAV_1100</a></p><div id="init">
+  <label>Enter Current Period Number (Last 3 Digits):</label><br />
+  <input id="currentPeriod" type="number" /><br />
+  <button onclick="generateFields()">Start</button>
 </div>
 
-<div id="resultInput"></div>
-<div id="predictBox" class="result-box" style="display:none;"></div>
+<div id="entryFields" class="hidden"></div>
 
-<div class="footer">
-  🔗 <a href="https://t.me/+fKHabYVx_shkMDk1" target="_blank" style="color:red">Join Channel</a><br>
-  👤 <a href="https://t.me/arnav_1100" target="_blank" style="color:red">@ARNAV_1100</a>
+<div class="prediction hidden" id="predictBox">
+  <h3>🔫 Suggested Number Shots:</h3>
+  <p id="predictionText"></p>
+</div>
+
+<div class="results hidden">
+  <label>Was it a Hit or Miss?</label><br />
+  <button onclick="recordResult('hit')">✅ HIT</button>
+  <button onclick="recordResult('miss')">❌ MISS</button><br />
+  <label>Enter Result Number:</label><br />
+  <input id="resultInput" type="number" />
+  <button onclick="addToHistory()">Add Result</button>
+</div>
+
+<div class="history">
+  <h3>📜 Last 20 Results</h3>
+  <ul id="historyList"></ul>
 </div>
 
   </div>  <script>
-    let last20 = [];
+    let history = [];
 
-    function generateInputs() {
-      const period = parseInt(document.getElementById('period').value);
-      const box = document.getElementById('resultInput');
-      box.innerHTML = '';
-
-      if (isNaN(period) || period < 20) return alert('Enter a valid period (min 20)');
-
+    function generateFields() {
+      const period = parseInt(document.getElementById('currentPeriod').value);
+      const fieldBox = document.getElementById('entryFields');
+      fieldBox.innerHTML = '<h3>Enter Last 20 Results:</h3>';
       for (let i = period - 20; i < period; i++) {
-        const label = document.createElement('label');
-        label.innerText = `Result for ${i}`;
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.min = 0;
-        input.max = 9;
-        input.dataset.pid = i;
-        box.appendChild(label);
-        box.appendChild(input);
+        fieldBox.innerHTML += `<label>${i}:</label><input type='number' id='r${i}' /><br />`;
       }
-
-      const saveBtn = document.createElement('button');
-      saveBtn.innerText = 'Save Results';
-      saveBtn.onclick = () => {
-        last20 = Array.from(document.querySelectorAll('#resultInput input')).map(i => parseInt(i.value));
-        if (last20.includes(NaN) || last20.length !== 20) return alert('Fill all 20 values');
-        box.innerHTML = '';
-        askCurrentResult(period);
-      };
-      box.appendChild(saveBtn);
+      fieldBox.innerHTML += `<button onclick='saveHistory(${period})'>Save</button>`;
+      fieldBox.classList.remove('hidden');
     }
 
-    function askCurrentResult(period) {
-      const box = document.getElementById('resultInput');
-      box.innerHTML = '';
-      const label = document.createElement('label');
-      label.innerText = `What was the result for ${period}?`;
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.min = 0;
-      input.max = 9;
-      input.id = 'currentResult';
-
-      const btn = document.createElement('button');
-      btn.innerText = 'Submit & Predict';
-      btn.onclick = () => {
-        const result = parseInt(document.getElementById('currentResult').value);
-        if (isNaN(result)) return alert('Enter valid number');
-        last20.push(result);
-        if (last20.length > 20) last20.shift();
-        showPrediction();
-      };
-
-      box.appendChild(label);
-      box.appendChild(input);
-      box.appendChild(btn);
+    function saveHistory(currentPeriod) {
+      history = [];
+      for (let i = currentPeriod - 20; i < currentPeriod; i++) {
+        let val = parseInt(document.getElementById('r' + i).value);
+        if (!isNaN(val)) history.push(val);
+      }
+      document.getElementById('entryFields').classList.add('hidden');
+      showPrediction();
     }
 
     function showPrediction() {
-      const freq = {};
-      last20.forEach(n => freq[n] = (freq[n] || 0) + 1);
-      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-      const top3 = sorted.slice(0, 3).map(i => i[0]);
+      let freq = {};
+      history.forEach(n => freq[n] = (freq[n] || 0) + 1);
+      let sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).map(pair => pair[0]);
+      let picks = sorted.slice(0, 3);
+      document.getElementById('predictBox').classList.remove('hidden');
+      document.getElementById('predictionText').innerText = picks.join(' / ');
+      document.querySelector('.results').classList.remove('hidden');
+    }
 
-      const box = document.getElementById('predictBox');
-      box.innerHTML = `🎯 Play on: <b>${top3.join(' / ')}</b>`;
-      box.style.display = 'block';
+    function recordResult(status) {
+      alert("Marked as: " + status.toUpperCase());
+    }
+
+    function addToHistory() {
+      let newResult = parseInt(document.getElementById('resultInput').value);
+      if (!isNaN(newResult)) {
+        history.push(newResult);
+        if (history.length > 20) history.shift();
+        updateHistory();
+        showPrediction();
+        document.getElementById('resultInput').value = '';
+      }
+    }
+
+    function updateHistory() {
+      let list = document.getElementById('historyList');
+      list.innerHTML = '';
+      history.forEach((n, i) => {
+        list.innerHTML += `<li>${i + 1}: ${n}</li>`;
+      });
     }
   </script></body>
 </html>
